@@ -32,6 +32,20 @@ class ProductController extends Controller
                 'price' => 500000000,
                 'description' => 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repudiandae, dolore ipsam placeat quia recusandae modi corrupti fuga commodi et vero sit voluptatum similique eum nisi aspernatur officia provident! Laborum, in!',
                 'image' => 'https://fastly.picsum.photos/id/419/200/200.jpg?hmac=yUYGIG3hJhzafcgOl8Drs4iTsia3HynizHXh8nTcvEQ'
+            ],
+            [
+                'id' => 'train',
+                'name' => 'Train',
+                'price' => 500000000,
+                'description' => 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repudiandae, dolore ipsam placeat quia recusandae modi corrupti fuga commodi et vero sit voluptatum similique eum nisi aspernatur officia provident! Laborum, in!',
+                'image' => 'https://fastly.picsum.photos/id/419/200/200.jpg?hmac=yUYGIG3hJhzafcgOl8Drs4iTsia3HynizHXh8nTcvEQ'
+            ],
+            [
+                'id' => 'train',
+                'name' => 'Train',
+                'price' => 500000000,
+                'description' => 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repudiandae, dolore ipsam placeat quia recusandae modi corrupti fuga commodi et vero sit voluptatum similique eum nisi aspernatur officia provident! Laborum, in!',
+                'image' => 'https://fastly.picsum.photos/id/419/200/200.jpg?hmac=yUYGIG3hJhzafcgOl8Drs4iTsia3HynizHXh8nTcvEQ'
             ]
         );
 
@@ -45,7 +59,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('products.form');
+        return view('products.form', [
+            'title' => 'Add new product'
+        ]);
     }
 
     /**

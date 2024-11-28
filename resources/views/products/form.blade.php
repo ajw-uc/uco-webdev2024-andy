@@ -1,5 +1,6 @@
 <x-template title="Add new product">
     <div class="container py-3">
+        <h1>{{ $title }}</h1>
         <form class="was-validated" method="post" action="{{ route('products.store') }}">
             <div class="mb-3">
                 <label for="name" class="form-label">Name</label>
