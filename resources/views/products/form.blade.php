@@ -1,7 +1,7 @@
 <x-template title="Add new product">
     <div class="container py-3">
         <h1>{{ $title }}</h1>
-        <form class="was-validated" method="post" action="{{ $product->id ? route('products.update', ['id' => $product->id]) : route('products.store') }}">
+        <form class="was-validated" method="post" action="{{ isset($product->id) ? route('products.update', ['id' => $product->id]) : route('products.store') }}">
             @csrf
             <div class="mb-3">
                 <label for="name" class="form-label">Name</label>
