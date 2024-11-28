@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index']);
 Route::prefix('/products')->controller(ProductController::class)->group(function() {
-	Route::get('/', 'index')->name('products');
+	Route::get('/', 'index')->name('products.list');
 	Route::get('/create', 'create')->name('products.create');
 	Route::post('/store', 'store')->name('products.store');
 	Route::get('/edit/{id}', 'edit')->name('products.edit');

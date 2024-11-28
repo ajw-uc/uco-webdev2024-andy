@@ -42,25 +42,25 @@
         <div class="collapse navbar-collapse justify-content-center bg-light" id="navbarCategories">
             <ul class="navbar-nav mb-2 mb-lg-0 text-center overflow-x-auto">
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ route('products') }}">All products</a>
+                    <a class="nav-link" aria-current="page" href="{{ route('products.list') }}">All products</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ route('products') }}">Shoes</a>
+                    <a class="nav-link" aria-current="page" href="{{ route('products.list') }}">Shoes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ route('products') }}">Shirts</a>
+                    <a class="nav-link" aria-current="page" href="{{ route('products.list') }}">Shirts</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ route('products') }}">Shorts</a>
+                    <a class="nav-link" aria-current="page" href="{{ route('products.list') }}">Shorts</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ route('products') }}">Jackets</a>
+                    <a class="nav-link" aria-current="page" href="{{ route('products.list') }}">Jackets</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ route('products') }}">Hoodies</a>
+                    <a class="nav-link" aria-current="page" href="{{ route('products.list') }}">Hoodies</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ route('products') }}">Accesories</a>
+                    <a class="nav-link" aria-current="page" href="{{ route('products.list') }}">Accesories</a>
                 </li>
             </ul>
         </div>
