@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg d-block">
+    <nav class="navbar py-0 navbar-expand-lg d-block">
         <div class="d-flex container-fluid">
             <a class="navbar-brand" href="/">
                 <img src="{{ asset('img/logo.png') }}" style="height:50px">
