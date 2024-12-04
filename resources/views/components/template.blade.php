@@ -20,11 +20,10 @@
             </a>
 
             <div class="d-flex gap-2 py-2">
-                <form class="input-group" role="search">
-                    <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+                <form class="input-group" role="search" action="{{ route('products.list') }}">
+                    <input class="form-control" type="search" placeholder="Search" aria-label="Search" name="search">
                     <button class="btn btn-light border" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </form>
-
 
                 <button class="btn btn-white border navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarCategories" aria-controls="navbarCategories" aria-expanded="false"

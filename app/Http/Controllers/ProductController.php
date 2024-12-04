@@ -14,15 +14,53 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $products = Product::select();
+        $searchQueries = [];
+
+        $sortOptions = [
+            'name_asc' => 'Name A-Z',
+            'name_desc' => 'Name Z-A',
+            'price_asc' => 'Lowest price',
+            'price_desc' => 'Highest price'
+        ];
 
         if ($request->category) {
             $products->where('category_id', $request->category);
+            $category = Category::where('id', $request->category)->first();
+            if ($category) {
+                $searchQueries[] = $category->name;
+            }
+        }
+
+        if ($request->search) {
+            $products->where(function($query) use ($request) {
+                $query->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('description', 'like', '%'.$request->search.'%');
+            });
+
+            $searchQueries[] = '"'.$request->search.'"';
+        }
+
+        if ($request->priceFrom) {
+            $products->where('price', '>=', $request->priceFrom);
+        }
+
+        if ($request->priceTo) {
+            $products->where('price', '<=', $request->priceTo);
+        }
+
+        if ($request->sort) {
+            [$sortColumn, $sortDirection] = explode('_', $request->sort);
+            $products->orderBy($sortColumn, $sortDirection ?? 'asc');
+        } else {
+            $products->orderBy('name', 'asc');
         }
 
         $products = $products->get();
 
         return view('products.index', [
-            'products' => $products
+            'products' => $products,
+            'searchQueries' => $searchQueries,
+            'sortOptions' => $sortOptions
         ]);
     }
 
