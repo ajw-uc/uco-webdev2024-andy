@@ -45,6 +45,8 @@
             </div>
             @endforeach
         </div>
+
+        {{ $products->links() }}
     </div>
 
     <a href="{{ route('products.create') }}" class="btn btn-lg btn-success position-fixed bottom-0 end-0 m-3" title="Add new product" data-bs-toggle="tooltip">

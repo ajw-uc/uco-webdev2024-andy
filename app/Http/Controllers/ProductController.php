@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\File;
 
 class ProductController extends Controller
 {
@@ -55,7 +58,9 @@ class ProductController extends Controller
             $products->orderBy('name', 'asc');
         }
 
-        $products = $products->get();
+        // $products = $products->get();
+
+        $products = $products->paginate(12)->withQueryString();
 
         return view('products.index', [
             'products' => $products,
@@ -81,15 +86,34 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $product = Product::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'image' => 'storage/products/default.jpg',
-            'category_id' => $request->category_id
+        $request->validate([
+            'name' => ['required', 'max:255', Rule::unique('products')],
+            'description' => ['string'],
+            'price' => ['required', 'numeric'],
+            'category_id' => ['required', Rule::in(Category::getOrdered()->pluck('id'))]
         ]);
 
-        return redirect()->route('products.show', ['id' => $product->id]);
+        try {
+            DB::beginTransaction();
+
+            $product = Product::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'price' => $request->price,
+                'category_id' => $request->category_id
+            ]);
+
+            $this->uploadFile($request, $product);
+
+            DB::commit();
+            return redirect()->route('products.show', ['id' => $product->id])
+                ->withSuccess('New product has been added!');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->withErrors([
+                'alert' => 'Failed to add new product'
+            ]);
+        }
     }
 
     /**
@@ -123,13 +147,34 @@ class ProductController extends Controller
     public function update(Request $request, string $id)
     {
         $product = Product::where('id', $id)->firstOrFail();
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
-        $product->category_id = $request->category_id;
-        $product->save();
 
-        return redirect()->route('products.show', ['id' => $product->id]);
+        $request->validate([
+            'name' => ['required', 'max:255', Rule::unique('products')->ignore($product->id)],
+            'description' => ['string'],
+            'price' => ['required', 'numeric'],
+            'category_id' => ['required', Rule::in(Category::getOrdered()->pluck('id'))],
+            'image' => [File::image()->max('2mb')]
+        ]);
+
+        try {
+            DB::transaction(function () use ($product, $request) {
+                $product->name = $request->name;
+                $product->description = $request->description;
+                $product->price = $request->price;
+                $product->category_id = $request->category_id;
+                $product->save();
+
+                $this->uploadFile($request, $product);
+            });
+
+            return redirect()->route('products.show', ['id' => $product->id])
+                ->withSuccess('Product has been edited');
+        } catch (\Exception $e) {
+            return back()->withErrors([
+                'alert' => 'Failed to edit product'
+            ]);
+        }
+
     }
 
     /**
@@ -141,5 +186,21 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('products.list');
+    }
+
+    private function uploadFile(Request $request, Product $product) {
+        if ($request->file('image')) {
+            /* Menyimpan file ke folder sesuai dengan FILESYSTEM_DRIVER .env dengan nama random */
+            $path = $request->file('image')->store('products');
+
+            /* Menyimpan file ke folder sesuai dengan FILESYSTEM_DRIVER .env dengan nama yang sudah ditentukan */
+            $extension = $request->file('image')->getClientOriginalExtension();
+            $path = $request->file('image')->storeAs('products', $product->id.'.'.$extension);
+
+            $product->image = 'storage/'.$path;
+            return $product->save();
+        }
+
+        return false;
     }
 }
