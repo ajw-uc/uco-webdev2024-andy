@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\File;
 
@@ -72,8 +73,17 @@ class ProductController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
+        // Otomatis memberikan exception jika tidak memiliki akses
+        Gate::authorize('is-admin');
+
+        // Cara manual
+        // if (! Gate::allows('is-admin')) {
+        //     abort(403);
+        // }
+
+
         $categories = Category::getOrdered();
         return view('products.form', [
             'title' => 'Add new product',
@@ -86,6 +96,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        Gate::authorize('is-admin');
         $request->validate([
             'name' => ['required', 'max:255', Rule::unique('products')],
             'description' => ['string'],
@@ -119,24 +130,22 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request)
     {
-        $product = Product::where('id', $id)->firstOrFail();
         return view('products.show', [
-            'product' => $product
+            'product' => $request->product
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Request $request)
     {
-        $product = Product::where('id', $id)->firstOrFail();
         $categories = Category::getOrdered();
         return view('products.form', [
             'title' => 'Edit product',
-            'product' => $product,
+            'product' => $request->product,
             'categories' => $categories
         ]);
     }
@@ -144,12 +153,10 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        $product = Product::where('id', $id)->firstOrFail();
-
         $request->validate([
-            'name' => ['required', 'max:255', Rule::unique('products')->ignore($product->id)],
+            'name' => ['required', 'max:255', Rule::unique('products')->ignore($request->product->id)],
             'description' => ['string'],
             'price' => ['required', 'numeric'],
             'category_id' => ['required', Rule::in(Category::getOrdered()->pluck('id'))],
@@ -157,17 +164,17 @@ class ProductController extends Controller
         ]);
 
         try {
-            DB::transaction(function () use ($product, $request) {
-                $product->name = $request->name;
-                $product->description = $request->description;
-                $product->price = $request->price;
-                $product->category_id = $request->category_id;
-                $product->save();
+            DB::transaction(function () use ($request) {
+                $request->product->name = $request->name;
+                $request->product->description = $request->description;
+                $request->product->price = $request->price;
+                $request->product->category_id = $request->category_id;
+                $request->product->save();
 
-                $this->uploadFile($request, $product);
+                $this->uploadFile($request, $request->product);
             });
 
-            return redirect()->route('products.show', ['id' => $product->id])
+            return redirect()->route('products.show', ['id' => $request->product->id])
                 ->withSuccess('Product has been edited');
         } catch (\Exception $e) {
             return back()->withErrors([
@@ -180,10 +187,9 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request)
     {
-        $product = Product::where('id', $id)->firstOrFail();
-        $product->delete();
+        $request->product->delete();
 
         return redirect()->route('products.list');
     }
