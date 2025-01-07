@@ -32,8 +32,14 @@
                 </button>
 
                 @auth
-                    <a href="{{ route('cart.list') }}" class="btn btn-white border">
+                    <a href="{{ route('cart.list') }}" class="btn btn-white border position-relative">
                         <i class="fa-solid fa-cart-shopping"></i>
+                        @if(auth()->user()->cart_items->isNotEmpty())
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ auth()->user()->cart_items->sum('quantity') }}
+                                <span class="visually-hidden">unread messages</span>
+                            </span>
+                        @endif
                     </a>
                     <div class="dropdown">
                         <a class="btn dropdown-toggle border" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -42,7 +48,7 @@
 
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="#">Profile</a></li>
-                            <li><a class="dropdown-item" href="#">Purchase history</a></li>
+                            <li><a class="dropdown-item" href="{{ route('purchase.list') }}">Purchase history</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="{{ route('logout') }}" method="POST">

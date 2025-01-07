@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Middleware\EnsureProductIdValid;
 use Illuminate\Support\Facades\Route;
@@ -47,4 +48,14 @@ Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')-
 
 Route::prefix('/cart')->controller(CartController::class)->middleware('auth')->group(function() {
     Route::get('/', 'index')->name('cart.list');
+    Route::post('/store', 'store')->name('cart.store');
+    Route::post('/update/{id}', 'update')->name('cart.update');
+    Route::post('/destroy/{id}', 'destroy')->name('cart.destroy');
+});
+
+Route::prefix('/purchase')->controller(PurchaseController::class)->middleware('auth')->group(function(){
+    Route::get('/', 'index')->name('purchase.list');
+    Route::get('/show/{id}', 'show')->name('purchase.show');
+    Route::get('/order', 'order')->name('purchase.order');
+    Route::post('/store', 'store')->name('purchase.store');
 });

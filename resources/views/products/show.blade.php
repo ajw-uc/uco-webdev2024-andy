@@ -17,12 +17,14 @@
                 <div class="fw-semibold text-danger mb-4">
                     Rp {{ number_format($product->price, 2, ',', '.') }}
                 </div>
-                <form class="mb-4">
+                <form class="mb-4" method="post" action="{{ route('cart.store') }}">
+                    @csrf
                     <div class="input-group mb-3">
                         <span class="input-group-text">Qty.</span>
-                        <input type="number" value="1" class="form-control" placeholder="Qty">
+                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                        <input type="number" name="quantity" value="1" class="form-control" placeholder="Qty">
                     </div>
-                    <button type="button" class="mb-3 btn btn-success w-100">
+                    <button type="submit" class="mb-3 btn btn-success w-100">
                         Add to cart
                     </button>
                 </form>
