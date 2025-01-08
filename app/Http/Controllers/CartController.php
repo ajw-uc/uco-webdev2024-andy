@@ -53,8 +53,12 @@ class CartController extends Controller
             ->where('id', $id)
             ->firstOrFail();
 
-        $cart->quantity = $request->quantity;
-        $cart->save();
+        if ($cart->quantity <= 0) {
+            $cart->delete();
+        } else {
+            $cart->quantity = $request->quantity;
+            $cart->save();
+        }
 
         return redirect()->route('cart.list');
     }
