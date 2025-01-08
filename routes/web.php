@@ -57,5 +57,5 @@ Route::prefix('/purchase')->controller(PurchaseController::class)->middleware('a
     Route::get('/', 'index')->name('purchase.list');
     Route::get('/show/{id}', 'show')->name('purchase.show');
     Route::get('/order', 'order')->name('purchase.order');
-    Route::post('/store', 'store')->name('purchase.store');
+    Route::post('/store', 'store')->name('purchase.store')->can('checkout', [\App\Models\Cart::class]);
 });

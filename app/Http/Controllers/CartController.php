@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class CartController extends Controller
 {
@@ -46,19 +47,15 @@ class CartController extends Controller
         $userId = $request->user()->id;
 
         $request->validate([
-            'quantity' => ['required', 'integer'],
+            'quantity' => ['required', 'integer', 'min:1'],
         ]);
 
         $cart = Cart::where('user_id', $userId)
             ->where('id', $id)
             ->firstOrFail();
 
-        if ($cart->quantity <= 0) {
-            $cart->delete();
-        } else {
-            $cart->quantity = $request->quantity;
-            $cart->save();
-        }
+        $cart->quantity = $request->quantity;
+        $cart->save();
 
         return redirect()->route('cart.list');
     }
@@ -70,6 +67,10 @@ class CartController extends Controller
         $cart = Cart::where('user_id', $userId)
             ->where('id', $id)
             ->firstOrFail();
+
+        if (!Gate::allows('delete_cart_item', $cart)) {
+            return abort(403, 'Unable to delete item');
+        }
 
         $cart->delete();
 

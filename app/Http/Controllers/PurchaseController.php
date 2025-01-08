@@ -9,6 +9,7 @@ use App\Models\PurchaseDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class PurchaseController extends Controller
@@ -35,7 +36,7 @@ class PurchaseController extends Controller
 
     function order(Request $request)
     {
-        if ($request->user()->cart_items->isEmpty()) {
+        if (!Gate::allows('checkout', \App\Models\Cart::class)) {
             return redirect()->route('cart.list');
         }
 
@@ -47,10 +48,6 @@ class PurchaseController extends Controller
 
     function store(Request $request)
     {
-        if ($request->user()->cart_items->isEmpty()) {
-            return redirect()->route('cart.list');
-        }
-
         $request->validate([
             'address' => ['required', 'string'],
             'payment_method' => ['required', Rule::in(array_column(PaymentMethod::cases(), 'value'))],

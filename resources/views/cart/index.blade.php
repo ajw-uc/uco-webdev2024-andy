@@ -1,4 +1,10 @@
 <x-template title="Shopping cart">
+    @if($errors->has('quantity'))
+        <div class="alert alert-danger alert-dismissible fade show rounded-0 mb-0" role="alert">
+            {{ $errors->first('quantity') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
     <div class="container-lg py-3">
         <h1>Shopping cart</h1>
         <div class="table-responsive">
@@ -32,10 +38,12 @@
                                         <button type="submit" class="btn btn-primary"><i class="fa fa-edit"></i></button>
                                     </div>
                                 </form>
+                                {{-- @can('delete_cart_item', $item) --}}
                                 <form method="post" action="{{ route('cart.destroy', ['id' => $item->id]) }}">
                                     @csrf
                                     <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
                                 </form>
+                                {{-- @endcan --}}
                             </div>
                         </td>
                         <td class="text-end">
@@ -56,7 +64,7 @@
                 </tfoot>
             </table>
         </div>
-        @if($cartItems->isNotEmpty())
+        @can('checkout', \App\Models\Cart::class)
         <a href="{{ route('purchase.order') }}" class="btn btn-success btn-lg">Checkout</a>
         @endif
     </div>
