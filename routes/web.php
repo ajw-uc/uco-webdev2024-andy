@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Middleware\EnsureProductIdValid;
@@ -59,3 +60,5 @@ Route::prefix('/purchase')->controller(PurchaseController::class)->middleware('a
     Route::get('/order', 'order')->name('purchase.order');
     Route::post('/store', 'store')->name('purchase.store')->can('checkout', [\App\Models\Cart::class]);
 });
+
+Route::post('/newsletter/send_email', [NewsletterController::class, 'send_email'])->name('newsletter.send_email');

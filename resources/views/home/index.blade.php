@@ -20,8 +20,9 @@
                 </h3>
             </div>
             <div class="col-lg-6">
-                <form>
-                    <input type="email" class="form-control form-control-lg mb-3" placeholder="Email" required>
+                <form method="post" action="{{ route('newsletter.send_email') }}">
+                    @csrf
+                    <input type="email" name="email" class="form-control form-control-lg mb-3" placeholder="Email" required>
                     <div class="text-end">
                         <button type="submit" class="btn btn-primary btn-lg">Subscribe</button>
                     </div>
