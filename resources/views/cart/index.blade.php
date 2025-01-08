@@ -38,12 +38,14 @@
                                         <button type="submit" class="btn btn-primary"><i class="fa fa-edit"></i></button>
                                     </div>
                                 </form>
-                                {{-- @can('delete_cart_item', $item) --}}
                                 <form method="post" action="{{ route('cart.destroy', ['id' => $item->id]) }}">
                                     @csrf
+                                    <!-- Tanpa cek policy -->
                                     <button type="submit" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+
+                                    <!-- Dengan cek policy delete_cart_item -->
+                                    {{-- <button type="submit" class="btn btn-danger" @cannot('delete_cart_item', $item) disabled @endcan><i class="fa fa-trash"></i></button> --}}
                                 </form>
-                                {{-- @endcan --}}
                             </div>
                         </td>
                         <td class="text-end">
