@@ -6,6 +6,7 @@ use App\Enums\PaymentMethod;
 use App\Models\Cart;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
+use App\Notifications\PurchaseOrdered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -94,12 +95,15 @@ class PurchaseController extends Controller
             // Hapus semua item di cart
             Cart::where('user_id', $request->user()->id)->delete();
 
+            $purchase = Purchase::where('id', $purchase->id)->first();
+            $request->user()->notify(new PurchaseOrdered($purchase));
+
             DB::commit();
             return redirect()->route('purchase.show', ['id' => $purchase->id]);
         } catch (\Exception $e) {
             DB::rollback();
             return back()->withErrors([
-                'alert' => 'Failed to make an order'
+                'alert' => $e->getMessage()
             ]);
         }
     }

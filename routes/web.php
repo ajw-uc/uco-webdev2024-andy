@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Middleware\EnsureProductIdValid;
@@ -62,3 +63,8 @@ Route::prefix('/purchase')->controller(PurchaseController::class)->middleware('a
 });
 
 Route::post('/newsletter/send_email', [NewsletterController::class, 'send_email'])->name('newsletter.send_email');
+
+Route::prefix('/notification')->controller(NotificationController::class)->middleware('auth')->group(function() {
+    Route::get('/', 'index')->name('notification.list');
+    Route::get('/read/{id}', 'read')->name('notification.read');
+});

@@ -32,6 +32,15 @@
                 </button>
 
                 @auth
+                    <a href="<?= route('notification.list') ?>" class="btn btn-white border position-relative">
+                        <i class="fa-solid fa-bell"></i>
+                        @if(auth()->user()->unreadNotifications->isNotEmpty())
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ auth()->user()->unreadNotifications->count() }}
+                                <span class="visually-hidden">unread notifications</span>
+                            </span>
+                        @endif
+                    </a>
                     <a href="{{ route('cart.list') }}" class="btn btn-white border position-relative">
                         <i class="fa-solid fa-cart-shopping"></i>
                         @if(auth()->user()->cart_items->isNotEmpty())
